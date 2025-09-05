@@ -1,0 +1,159 @@
+@prefix : <http://example.org/hr#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+### Ontology Declaration
+:HRDocumentsOntology rdf:type owl:Ontology .
+
+### Core Classes
+:Resume rdf:type owl:Class .
+:JobDescription rdf:type owl:Class .
+:Skill rdf:type owl:Class .
+:Experience rdf:type owl:Class .
+:Education rdf:type owl:Class .
+:Certification rdf:type owl:Class .
+:Company rdf:type owl:Class .
+:Role rdf:type owl:Class .
+:Technology rdf:type owl:Class .
+
+### Resume Properties
+:hasCandidate rdf:type owl:ObjectProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range foaf:Person .
+
+:hasSkill rdf:type owl:ObjectProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range :Skill .
+
+:hasExperience rdf:type owl:ObjectProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range :Experience .
+
+:hasEducation rdf:type owl:ObjectProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range :Education .
+
+:hasCertification rdf:type owl:ObjectProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range :Certification .
+
+:expectedSalary rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Resume ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Expected Salary"@en .
+
+### Job Description Properties
+:requiresSkill rdf:type owl:ObjectProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range :Skill .
+
+:requiresExperience rdf:type owl:ObjectProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range :Experience .
+
+:requiresEducation rdf:type owl:ObjectProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range :Education .
+
+:offeredBy rdf:type owl:ObjectProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range :Company .
+
+:hasRole rdf:type owl:ObjectProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range :Role .
+
+:minimumSalary rdf:type owl:DatatypeProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Minimum Salary"@en .
+
+:maximumSalary rdf:type owl:DatatypeProperty ;
+    rdfs:domain :JobDescription ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Maximum Salary"@en .
+
+### Skill Details
+:skillName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Skill ;
+    rdfs:range xsd:string .
+
+:technology rdf:type owl:ObjectProperty ;
+    rdfs:domain :Skill ;
+    rdfs:range :Technology .
+
+### Experience Details
+:yearsOfExperience rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Experience ;
+    rdfs:range xsd:decimal .
+
+:workedAt rdf:type owl:ObjectProperty ;
+    rdfs:domain :Experience ;
+    rdfs:range :Company .
+
+:roleHeld rdf:type owl:ObjectProperty ;
+    rdfs:domain :Experience ;
+    rdfs:range :Role .
+
+### Education Details
+:degree rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Education ;
+    rdfs:range xsd:string .
+
+:institution rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Education ;
+    rdfs:range xsd:string .
+
+:graduationYear rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Education ;
+    rdfs:range xsd:gYear .
+
+### Certification Details
+:certificationName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Certification ;
+    rdfs:range xsd:string .
+
+:issuedBy rdf:type owl:ObjectProperty ;
+    rdfs:domain :Certification ;
+    rdfs:range :Company .
+
+:issueYear rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Certification ;
+    rdfs:range xsd:gYear .
+
+### Role Hierarchy
+:EngineeringRole rdf:type owl:Class ;
+    rdfs:subClassOf :Role .
+
+:FrontendEngineer rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:BackendEngineer rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:FullStackEngineer rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:DevOpsSpecialist rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:DataEngineer rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:MachineLearningEngineer rdf:type owl:Class ;
+    rdfs:subClassOf :EngineeringRole .
+
+:ManagementRole rdf:type owl:Class ;
+    rdfs:subClassOf :Role .
+
+:TechLead rdf:type owl:Class ;
+    rdfs:subClassOf :ManagementRole .
+
+:EngineeringManager rdf:type owl:Class ;
+    rdfs:subClassOf :ManagementRole .
+
+:ProductManager rdf:type owl:Class ;
+    rdfs:subClassOf :ManagementRole .
