@@ -60,5 +60,41 @@ The PDF will be saved in the same folder as your Markdown file
 ## Pipeline
 SPARQL Query → Ontop Engine → OBDA Mapping → SQL Query → Trino → PostgreSQL → Result → RDF Triples
 
+## Elasticsearch Index and Document Management APIs
+
+### Index APIs
+- **Create Index:**
+  `PUT /index_name`
+  Creates a new index.
+
+- **Modify Index (Settings/Mappings):**
+  `PUT /index_name/_settings`
+  `PUT /index_name/_mapping`
+  Updates index settings or mappings.
+
+- **Delete Index:**
+  `DELETE /index_name`
+  Deletes an index.
+
+### Document APIs
+- **Create/Index Document:**
+  `POST /index_name/_doc`
+  `PUT /index_name/_doc/document_id`
+  Adds a new document (auto-generated or specified ID).
+
+- **Update Document:**
+  `POST /index_name/_update/document_id`
+  Updates fields in an existing document.
+
+- **Get Document:**
+  `GET /index_name/_doc/document_id`
+  Retrieves a document by ID.
+
+- **Delete Document:**
+  `DELETE /index_name/_doc/document_id`
+  Removes a document.
+
+You can use these APIs via HTTP requests (e.g., with curl, Postman, or any HTTP client).
+
 
 

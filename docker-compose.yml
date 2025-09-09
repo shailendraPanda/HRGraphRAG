@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
-  postgres:
-    image: postgres:14
-    container_name: hr-postgres
-    environment:
-      POSTGRES_USER: hr_user
-      POSTGRES_PASSWORD: hr_pass
-      POSTGRES_DB: hr_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  # postgres:
+  #   image: postgres:14
+  #   container_name: hr-postgres
+  #   environment:
+  #     POSTGRES_USER: hr_user
+  #     POSTGRES_PASSWORD: hr_pass
+  #     POSTGRES_DB: hr_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
@@ -34,7 +34,6 @@ services:
     volumes:
       - ./trino-config/catalog:/etc/trino/catalog
     depends_on:
-      - postgres
       - elasticsearch
 
   ontop:
@@ -56,5 +55,4 @@ services:
       - trino
 
 volumes:
-  pgdata:
   esdata:
