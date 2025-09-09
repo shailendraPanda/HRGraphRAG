@@ -7,137 +7,188 @@ foaf:   http://xmlns.com/foaf/0.1/
 
 [MappingDeclaration] @collection [
 
-  ### Resume and Candidate
+
+  ### Resume mappings
 
   mappingId    ResumeClass
-  target       :resume/{id} rdf:type :Resume .
-  source       SELECT id FROM resumes
+  target       :resume/{documentId} rdf:type :Resume .
+  source       SELECT documentId FROM hr_documents WHERE documentType = 'resume'
 
-  mappingId    ResumeCandidate
-  target       :resume/{id} :hasCandidate :person/{id} .
-  source       SELECT id FROM resumes
+  mappingId    ResumeSkills
+  target       :resume/{documentId} :hasSkill :skill/{skill} .
+  source       SELECT documentId, skill FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.skills) AS t (skill)
 
-  mappingId    CandidateName
-  target       :person/{id} foaf:name {name}^^xsd:string .
-  source       SELECT id, name FROM resumes
-
-  mappingId    CandidateEmail
-  target       :person/{id} foaf:mbox {email}^^xsd:string .
-  source       SELECT id, email FROM resumes
-
-  mappingId    CandidatePhone
-  target       :person/{id} :phoneNumber {phone}^^xsd:string .
-  source       SELECT id, phone FROM resumes
-
-  mappingId    CandidateLocation
-  target       :person/{id} :location {location}^^xsd:string .
-  source       SELECT id, location FROM resumes
-
-  mappingId    ResumeExpectedSalary
-  target       :resume/{id} :expectedSalary {expected_salary}^^xsd:decimal .
-  source       SELECT id, expected_salary FROM resumes
-
-  mappingId    ResumeRole
-  target       :resume/{id} :hasRole :{role} .
-  source       SELECT id, role FROM resumes
-
-  mappingId    ResumeSkill
-  target       :resume/{id} :hasSkill :skill/{skill} .
-  source       SELECT id, UNNEST(skills) AS skill FROM resumes
-
-  ### Experience per Role
-
-  mappingId    ResumeExperienceLink
-  target       :resume/{resume_id} :hasExperience :exp/{id} .
-  source       SELECT id, resume_id FROM experience
-
-  mappingId    ExperienceClass
-  target       :exp/{id} rdf:type :Experience .
-  source       SELECT id FROM experience
-
-  mappingId    ExperienceRole
-  target       :exp/{id} :roleHeld :{role} .
-  source       SELECT id, role FROM experience
-
-  mappingId    ExperienceCompany
-  target       :exp/{id} :workedAt :company/{company} .
-  source       SELECT id, company FROM experience
-
-  mappingId    ExperienceYears
-  target       :exp/{id} :yearsOfExperience {years}^^xsd:decimal .
-  source       SELECT id, years FROM experience
-
-  mappingId    ExperienceSkill
-  target       :exp/{id} :experienceSkill :skill/{skill} .
-  source       SELECT id, UNNEST(skills) AS skill FROM experience
-
-  ### Job Description
-
-  mappingId    JobClass
-  target       :job/{id} rdf:type :JobDescription .
-  source       SELECT id FROM job_descriptions
-
-  mappingId    JobRole
-  target       :job/{id} :hasRole :{role} .
-  source       SELECT id, role FROM job_descriptions
-
-  mappingId    JobMinSalary
-  target       :job/{id} :minimumSalary {min_salary}^^xsd:decimal .
-  source       SELECT id, min_salary FROM job_descriptions
-
-  mappingId    JobMaxSalary
-  target       :job/{id} :maximumSalary {max_salary}^^xsd:decimal .
-  source       SELECT id, max_salary FROM job_descriptions
-
-  mappingId    JobRequiredSkill
-  target       :job/{id} :requiresSkill :skill/{skill} .
-  source       SELECT id, UNNEST(required_skills) AS skill FROM job_descriptions
-
-  mappingId    JobCompany
-  target       :job/{id} :offeredBy :company/{company_name} .
-  source       SELECT id, company_name FROM job_descriptions
-
-  mappingId    JobRequiredExperience
-  target       :job/{id} :requiresExperience :exp/{id} .
-  source       SELECT id FROM job_descriptions
-
-  mappingId    JobRequiredEducation
-  target       :job/{id} :requiresEducation :edu/{id} .
-  source       SELECT id FROM job_descriptions
-
-  ### Education (Placeholder)
+  mappingId    ResumeExperience
+  target       :resume/{documentId} :hasExperience {experience} .
+  source       SELECT documentId, relationalMapping.experience AS experience FROM hr_documents WHERE documentType = 'resume'
 
   mappingId    ResumeEducation
-  target       :resume/{resume_id} :hasEducation :edu/{id} .
-  source       SELECT id, resume_id FROM education
+  target       :resume/{documentId} :hasEducation {education} .
+  source       SELECT documentId, relationalMapping.education AS education FROM hr_documents WHERE documentType = 'resume'
 
-  mappingId    EducationDegree
-  target       :edu/{id} :degree {degree}^^xsd:string .
-  source       SELECT id, degree FROM education
+  ### Job Description mappings
 
-  mappingId    EducationInstitution
-  target       :edu/{id} :institution {institution}^^xsd:string .
-  source       SELECT id, institution FROM education
+  mappingId    JobClass
+  target       :job/{documentId} rdf:type :JobDescription .
+  source       SELECT documentId FROM hr_documents WHERE documentType = 'job_description'
 
-  mappingId    EducationYear
-  target       :edu/{id} :graduationYear {graduation_year}^^xsd:gYear .
-  source       SELECT id, graduation_year FROM education
+  mappingId    JobRequiredSkills
+  target       :job/{documentId} :requiresSkill :skill/{skill} .
+  source       SELECT documentId, skill FROM hr_documents WHERE documentType = 'job_description' CROSS JOIN UNNEST(relationalMapping.requiredSkills) AS t (skill)
 
-  ### Certification (Placeholder)
+  mappingId    JobMinExperience
+  target       :job/{documentId} :minExperience {minExperience} .
+  source       SELECT documentId, relationalMapping.minExperience AS minExperience FROM hr_documents WHERE documentType = 'job_description'
 
-  mappingId    ResumeCertification
-  target       :resume/{resume_id} :hasCertification :cert/{id} .
-  source       SELECT id, resume_id FROM certification
+  mappingId    JobSalaryRange
+  target       :job/{documentId} :salaryRange {salaryRange} .
+  source       SELECT documentId, relationalMapping.salaryRange AS salaryRange FROM hr_documents WHERE documentType = 'job_description'
 
-  mappingId    CertificationName
-  target       :cert/{id} :certificationName {name}^^xsd:string .
-  source       SELECT id, name FROM certification
+  ### Document-based Resume mappings (Elasticsearch)
 
-  mappingId    CertificationIssuer
-  target       :cert/{id} :issuedBy :company/{issuer} .
-  source       SELECT id, issuer FROM certification
+  mappingId    ResumeClass_ES
+  target       :resume/{documentId} rdf:type :Resume .
+  source       SELECT documentId FROM hr_documents WHERE documentType = 'resume'
 
-  mappingId    CertificationYear
-  target       :cert/{id} :issueYear {issue_year}^^xsd:gYear .
-  source       SELECT id, issue_year FROM certification
+  mappingId    ResumeSkills_ES
+  target       :resume/{documentId} :hasSkill :skill/{skill} .
+  source       SELECT documentId, skill FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.skills) AS t (skill)
+
+  mappingId    ResumeExperience_ES
+  target       :resume/{documentId} :hasExperience {experience} .
+  source       SELECT documentId, relationalMapping.experience AS experience FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    ResumeEducation_ES
+  target       :resume/{documentId} :hasEducation {education} .
+  source       SELECT documentId, relationalMapping.education AS education FROM hr_documents WHERE documentType = 'resume'
+
+  ### Document-based Job Description mappings (Elasticsearch)
+
+  mappingId    JobClass_ES
+  target       :job/{documentId} rdf:type :JobDescription .
+  source       SELECT documentId FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobCompany_ES
+  target       :job/{documentId} :offeredBy :company/{company} .
+  source       SELECT documentId, relationalMapping.company AS company FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobLocation_ES
+  target       :job/{documentId} :location {location}^^xsd:string .
+  source       SELECT documentId, relationalMapping.location AS location FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobRole_ES
+  target       :job/{documentId} :hasRole :role/{roleTitle} .
+  source       SELECT documentId, relationalMapping.roleTitle AS roleTitle FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobEmploymentType_ES
+  target       :job/{documentId} :employmentType {employmentType}^^xsd:string .
+  source       SELECT documentId, relationalMapping.employmentType AS employmentType FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobMinSalary_ES
+  target       :job/{documentId} :minimumSalary {minimumSalary}^^xsd:decimal .
+  source       SELECT documentId, relationalMapping.minimumSalary AS minimumSalary FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobMaxSalary_ES
+  target       :job/{documentId} :maximumSalary {maximumSalary}^^xsd:decimal .
+  source       SELECT documentId, relationalMapping.maximumSalary AS maximumSalary FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobMinExperience_ES
+  target       :job/{documentId} :minExperience {minimumExperience}^^xsd:decimal .
+  source       SELECT documentId, relationalMapping.minimumExperience AS minimumExperience FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobMaxExperience_ES
+  target       :job/{documentId} :maxExperience {maximumExperience}^^xsd:decimal .
+  source       SELECT documentId, relationalMapping.maximumExperience AS maximumExperience FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobRequiredEducation_ES
+  target       :job/{documentId} :requiresEducation {educationRequired}^^xsd:string .
+  source       SELECT documentId, relationalMapping.educationRequired AS educationRequired FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobRequiredSkills_ES
+  target       :job/{documentId} :requiresSkill :skill/{skill} .
+  source       SELECT documentId, skill FROM hr_documents WHERE documentType = 'job_description' CROSS JOIN UNNEST(relationalMapping.requiredSkills) AS t (skill)
+
+  mappingId    JobMinExperience_ES
+  target       :job/{documentId} :minExperience {minExperience} .
+  source       SELECT documentId, relationalMapping.minExperience AS minExperience FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobSalaryRange_ES
+  target       :job/{documentId} :salaryRange {salaryRange} .
+  source       SELECT documentId, relationalMapping.salaryRange AS salaryRange FROM hr_documents WHERE documentType = 'job_description'
+
+  ### Document-based Resume Contact mappings (Elasticsearch)
+
+  mappingId    ResumePhoneNumber_ES
+  target       :resume/{documentId} :phoneNumber {phoneNumber}^^xsd:string .
+  source       SELECT documentId, relationalMapping.contact.phone AS phoneNumber FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    ResumeLocation_ES
+  target       :resume/{documentId} :location {location}^^xsd:string .
+  source       SELECT documentId, relationalMapping.contact.location AS location FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    ResumeExpectedSalary_ES
+  target       :resume/{documentId} :expectedSalary {expectedSalary}^^xsd:decimal .
+  source       SELECT documentId, relationalMapping.expectedSalary AS expectedSalary FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    ResumeEmail_ES
+  target       :resume/{documentId} foaf:mbox {email}^^xsd:string .
+  source       SELECT documentId, relationalMapping.contact.email AS email FROM hr_documents WHERE documentType = 'resume'
+
+  ### Document-based Resume Education mappings (Elasticsearch)
+
+  mappingId    ResumeEducation_ES
+  target       :resume/{documentId} :hasEducation :edu/{documentId} .
+  source       SELECT documentId FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    EducationDegree_ES
+  target       :edu/{documentId} :degree {degree}^^xsd:string .
+  source       SELECT documentId, relationalMapping.education.degree AS degree FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    EducationInstitution_ES
+  target       :edu/{documentId} :institution {institution}^^xsd:string .
+  source       SELECT documentId, relationalMapping.education.institution AS institution FROM hr_documents WHERE documentType = 'resume'
+
+  mappingId    EducationYear_ES
+  target       :edu/{documentId} :graduationYear {graduationYear}^^xsd:gYear .
+  source       SELECT documentId, relationalMapping.education.graduationYear AS graduationYear FROM hr_documents WHERE documentType = 'resume'
+
+  ### Document-based Resume Certification mappings (Elasticsearch)
+
+  mappingId    ResumeCertification_ES
+  target       :resume/{documentId} :hasCertification :cert/{certId} .
+  source       SELECT documentId, certId FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.certifications) AS t (certId)
+
+  mappingId    CertificationName_ES
+  target       :cert/{certId} :certificationName {title}^^xsd:string .
+  source       SELECT certId, t.title AS title FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.certifications) AS t (certId)
+
+  mappingId    CertificationIssuer_ES
+  target       :cert/{certId} :issuedBy :company/{issuer} .
+  source       SELECT certId, t.issuer AS issuer FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.certifications) AS t (certId)
+
+  mappingId    CertificationYear_ES
+  target       :cert/{certId} :issueYear {year}^^xsd:gYear .
+  source       SELECT certId, t.year AS year FROM hr_documents WHERE documentType = 'resume' CROSS JOIN UNNEST(relationalMapping.certifications) AS t (certId)
+
+  ### Document-based Resume Candidate Name mapping (Elasticsearch)
+
+  mappingId    ResumeCandidateName_ES
+  target       :resume/{documentId} foaf:name {candidateName}^^xsd:string .
+  source       SELECT documentId, relationalMapping.candidateName AS candidateName FROM hr_documents WHERE documentType = 'resume'
+
+  ### Resource-based Job Description mappings (Elasticsearch)
+
+  mappingId    JobRoleResource_ES
+  target       :job/{documentId} :hasRole :role/{roleTitle} .
+  source       SELECT documentId, replace(replace(relationalMapping.roleTitle, ' ', ''), '.', '') AS roleTitle FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobCompanyResource_ES
+  target       :job/{documentId} :offeredBy :company/{company} .
+  source       SELECT documentId, replace(replace(relationalMapping.company, ' ', ''), '.', '') AS company FROM hr_documents WHERE documentType = 'job_description'
+
+  mappingId    JobRequiredEducationResource_ES
+  target       :job/{documentId} :requiresEducation :education/{educationRequired} .
+  source       SELECT documentId, replace(replace(relationalMapping.educationRequired, ' ', ''), '.', '') AS educationRequired FROM hr_documents WHERE documentType = 'job_description'
+
+  # Add more mappings as your document structure evolves.
 ]
