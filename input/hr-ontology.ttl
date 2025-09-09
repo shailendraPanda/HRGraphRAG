@@ -1,176 +1,316 @@
-@prefix : <http://example.org/hr#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://example.com/hr#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@base <http://example.com/hr> .
 
-### Ontology Declaration
-:HRDocumentsOntology rdf:type owl:Ontology .
-
-### Core Classes
-:Resume rdf:type owl:Class .
-:JobDescription rdf:type owl:Class .
-:Skill rdf:type owl:Class .
-:Experience rdf:type owl:Class .
-:Education rdf:type owl:Class .
-:Certification rdf:type owl:Class .
-:Company rdf:type owl:Class .
-:Role rdf:type owl:Class .
-:Technology rdf:type owl:Class .
-
-### Resume Properties
-:hasCandidate rdf:type owl:ObjectProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range foaf:Person .
-
-:phoneNumber rdf:type owl:DatatypeProperty ;
-    rdfs:domain foaf:Person ;
-    rdfs:range xsd:string ;
-    rdfs:label "Phone Number"@en .
-
-:location rdf:type owl:DatatypeProperty ;
-    rdfs:domain foaf:Person ;
-    rdfs:range xsd:string ;
-    rdfs:label "Location"@en .
+<http://example.com/hr> rdf:type owl:Ontology ;
+rdfs:label "HR Domain Ontology"@en ;
+rdfs:comment "Ontology for Human Resources domain covering resumes and job descriptions"@en .
 
 
-:hasSkill rdf:type owl:ObjectProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range :Skill .
+# Object Properties
 
-:hasExperience rdf:type owl:ObjectProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range :Experience .
-
-:hasEducation rdf:type owl:ObjectProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range :Education .
+:atCompany rdf:type owl:ObjectProperty ;
+     rdfs:domain :Job ;
+     rdfs:range :Company ;
+     rdfs:label "at company"@en ;
+     rdfs:comment "Relates a job to the company offering it"@en .
 
 :hasCertification rdf:type owl:ObjectProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range :Certification .
+rdfs:domain :Person ;
+rdfs:range :Certification ;
+rdfs:label "has certification"@en ;
+rdfs:comment "Relates a person to their certifications"@en .
 
-:expectedSalary rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Resume ;
-    rdfs:range xsd:decimal ;
-    rdfs:label "Expected Salary"@en .
+:hasLocationMatchWith rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :Job ;
+rdfs:label "has location match with"@en ;
+rdfs:comment "Indicates location compatibility between candidate and job"@en .
 
-### Job Description Properties
-:requiresSkill rdf:type owl:ObjectProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range :Skill .
-
-:requiresExperience rdf:type owl:ObjectProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range :Experience .
-
-:requiresEducation rdf:type owl:ObjectProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range :Education .
-
-:offeredBy rdf:type owl:ObjectProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range :Company .
+:hasMatchingSkillWith rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :Job ;
+rdfs:label "has matching skill with"@en ;
+rdfs:comment "Indicates skill match between candidate and job"@en .
 
 :hasRole rdf:type owl:ObjectProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range :Role .
+rdfs:domain :WorkExperience ;
+rdfs:range :Role ;
+rdfs:label "has role"@en ;
+rdfs:comment "Relates work experience to a role"@en .
 
-:minimumSalary rdf:type owl:DatatypeProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range xsd:decimal ;
-    rdfs:label "Minimum Salary"@en .
+:hasSalaryMatchWith rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :Job ;
+rdfs:label "has salary match with"@en ;
+rdfs:comment "Indicates salary compatibility between candidate and job"@en .
 
-:maximumSalary rdf:type owl:DatatypeProperty ;
-    rdfs:domain :JobDescription ;
-    rdfs:range xsd:decimal ;
-    rdfs:label "Maximum Salary"@en .
+:hasSkill rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :Skill ;
+rdfs:label "has skill"@en ;
+rdfs:comment "Relates a person to their skills"@en .
 
-### Skill Details
-:skillName rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Skill ;
-    rdfs:range xsd:string .
+:hasWorkExperience rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :WorkExperience ;
+rdfs:label "has work experience"@en ;
+rdfs:comment "Relates a person to their work experience"@en .
 
-:technology rdf:type owl:ObjectProperty ;
-    rdfs:domain :Skill ;
-    rdfs:range :Technology .
+:livesIn rdf:type owl:ObjectProperty ;
+rdfs:domain :Person ;
+rdfs:range :Location ;
+rdfs:label "lives in"@en ;
+rdfs:comment "Relates a person to their location"@en .
 
-### Experience Details
-:yearsOfExperience rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Experience ;
-    rdfs:range xsd:decimal .
+:locatedAt rdf:type owl:ObjectProperty ;
+rdfs:domain owl:Thing ;
+rdfs:range :Location ;
+rdfs:label "located at"@en ;
+rdfs:comment "Relates an entity to a location"@en .
 
-:workedAt rdf:type owl:ObjectProperty ;
-    rdfs:domain :Experience ;
-    rdfs:range :Company .
+:requiresRole rdf:type owl:ObjectProperty ;
+rdfs:domain :Job ;
+rdfs:range :Role ;
+rdfs:label "requires role"@en ;
+rdfs:comment "Relates a job to required roles"@en .
 
-:roleHeld rdf:type owl:ObjectProperty ;
-    rdfs:domain :Experience ;
-    rdfs:range :Role .
-    
-:experienceSkill rdf:type owl:ObjectProperty ;
-    rdfs:domain :Experience ;
-    rdfs:range :Skill ;
-    rdfs:label "Skills used in this experience"@en .
+:requiresSkill rdf:type owl:ObjectProperty ;
+rdfs:domain :Job ;
+rdfs:range :Skill ;
+rdfs:label "requires skill"@en ;
+rdfs:comment "Relates a job to required skills"@en .
+
+:usedSkill rdf:type owl:ObjectProperty ;
+rdfs:domain :WorkExperience ;
+rdfs:range :Skill ;
+rdfs:label "used skill"@en ;
+rdfs:comment "Relates work experience to skills used"@en .
 
 
-### Education Details
-:degree rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Education ;
-    rdfs:range xsd:string .
+#    Data Properties
 
-:institution rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Education ;
-    rdfs:range xsd:string .
 
-:graduationYear rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Education ;
-    rdfs:range xsd:gYear .
-
-### Certification Details
 :certificationName rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Certification ;
-    rdfs:range xsd:string .
+rdfs:domain :Certification ;
+rdfs:range xsd:string ;
+rdfs:label "certification name"@en .
 
-:issuedBy rdf:type owl:ObjectProperty ;
-    rdfs:domain :Certification ;
-    rdfs:range :Company .
+:expectsSalary rdf:type owl:DatatypeProperty ;
+rdfs:domain :Person ;
+rdfs:range xsd:decimal ;
+rdfs:label "expects salary"@en .
 
-:issueYear rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Certification ;
-    rdfs:range xsd:gYear .
+:hasCandidateId rdf:type owl:DatatypeProperty ;
+rdfs:domain :Person ;
+rdfs:range xsd:string ;
+rdfs:label "has candidate ID"@en .
 
-### Role Hierarchy
-:EngineeringRole rdf:type owl:Class ;
-    rdfs:subClassOf :Role .
+:hasCompanyName rdf:type owl:DatatypeProperty ;
+rdfs:domain :Company ;
+rdfs:range xsd:string ;
+rdfs:label "has company name"@en .
 
-:FrontendEngineer rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasContact rdf:type owl:DatatypeProperty ;
+rdfs:domain :Resume ;
+rdfs:range xsd:string ;
+rdfs:label "has contact"@en .
 
-:BackendEngineer rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasDocumentId rdf:type owl:DatatypeProperty ;
+rdfs:domain :HRDocument ;
+rdfs:range xsd:string ;
+rdfs:label "has document ID"@en .
 
-:FullStackEngineer rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasDocumentName rdf:type owl:DatatypeProperty ;
+rdfs:domain :HRDocument ;
+rdfs:range xsd:string ;
+rdfs:label "has document name"@en .
 
-:DevOpsSpecialist rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasDocumentType rdf:type owl:DatatypeProperty ;
+rdfs:domain :HRDocument ;
+rdfs:range xsd:string ;
+rdfs:label "has document type"@en .
 
-:DataEngineer rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasEmail rdf:type owl:DatatypeProperty ;
+rdfs:domain :Resume ;
+rdfs:range xsd:string ;
+rdfs:label "has email"@en .
 
-:MachineLearningEngineer rdf:type owl:Class ;
-    rdfs:subClassOf :EngineeringRole .
+:hasExperienceData rdf:type owl:DatatypeProperty ;
+rdfs:domain :WorkExperience ;
+rdfs:range xsd:string ;
+rdfs:label "has experience data"@en .
 
-:ManagementRole rdf:type owl:Class ;
-    rdfs:subClassOf :Role .
+:hasExperienceRangeMax rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:integer ;
+rdfs:label "has experience range max"@en .
 
-:TechLead rdf:type owl:Class ;
-    rdfs:subClassOf :ManagementRole .
+:hasExperienceRangeMin rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:integer ;
+rdfs:label "has experience range min"@en .
 
-:EngineeringManager rdf:type owl:Class ;
-    rdfs:subClassOf :ManagementRole .
+:hasExpectedSalary rdf:type owl:DatatypeProperty ;
+rdfs:domain :Resume ;
+rdfs:range xsd:decimal ;
+rdfs:label "has expected salary"@en .
 
-:ProductManager rdf:type owl:Class ;
-    rdfs:subClassOf :ManagementRole .
+:hasJobId rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:string ;
+rdfs:label "has job ID"@en .
+
+:hasJobLocation rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:string ;
+rdfs:label "has job location"@en .
+
+:hasJobPost rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:string ;
+rdfs:label "has job post"@en .
+
+:hasJobTitle rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:string ;
+rdfs:label "has job title"@en .
+
+:hasLocation rdf:type owl:DatatypeProperty ;
+rdfs:domain :Resume ;
+rdfs:range xsd:string ;
+rdfs:label "has location"@en .
+
+:hasMappingsData rdf:type owl:DatatypeProperty ;
+rdfs:domain :HRDocument ;
+rdfs:range xsd:string ;
+rdfs:label "has mappings data"@en .
+
+:hasPhoneNumber rdf:type owl:DatatypeProperty ;
+rdfs:domain :Person ;
+rdfs:range xsd:string ;
+rdfs:label "has phone number"@en .
+
+:hasResumeId rdf:type owl:DatatypeProperty ;
+rdfs:domain :Resume ;
+rdfs:range xsd:string ;
+rdfs:label "has resume ID"@en .
+
+:hasSalaryRangeMax rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:decimal ;
+rdfs:label "has salary range max"@en .
+
+:hasSalaryRangeMin rdf:type owl:DatatypeProperty ;
+rdfs:domain :JobDescription ;
+rdfs:range xsd:decimal ;
+rdfs:label "has salary range min"@en .
+
+:hasYearsOfExperience rdf:type owl:DatatypeProperty ;
+rdfs:domain :WorkExperience ;
+rdfs:range xsd:integer ;
+rdfs:label "has years of experience"@en .
+
+:locationMatchScore rdf:type owl:DatatypeProperty ;
+rdfs:range xsd:integer ;
+rdfs:label "location match score"@en .
+
+:locationName rdf:type owl:DatatypeProperty ;
+rdfs:domain :Location ;
+rdfs:range xsd:string ;
+rdfs:label "location name"@en .
+
+:offersMaxSalary rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:decimal ;
+rdfs:label "offers max salary"@en .
+
+:offersMinSalary rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:decimal ;
+rdfs:label "offers min salary"@en .
+
+:requiresMaxExperience rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:integer ;
+rdfs:label "requires max experience"@en .
+
+:requiresMinExperience rdf:type owl:DatatypeProperty ;
+rdfs:domain :Job ;
+rdfs:range xsd:integer ;
+rdfs:label "requires min experience"@en .
+
+:roleName rdf:type owl:DatatypeProperty ;
+rdfs:domain :Role ;
+rdfs:range xsd:string ;
+rdfs:label "role name"@en .
+
+:salaryCompatible rdf:type owl:DatatypeProperty ;
+rdfs:range xsd:boolean ;
+rdfs:label "salary compatible"@en .
+
+:skillMatchScore rdf:type owl:DatatypeProperty ;
+rdfs:range xsd:integer ;
+rdfs:label "skill match score"@en .
+
+:skillName rdf:type owl:DatatypeProperty ;
+rdfs:domain :Skill ;
+rdfs:range xsd:string ;
+rdfs:label "skill name"@en .
+
+
+#    Classes
+
+:Certification rdf:type owl:Class ;
+rdfs:label "Certification"@en ;
+rdfs:comment "Professional certifications held by candidates"@en .
+
+:Company rdf:type owl:Class ;
+rdfs:label "Company"@en ;
+rdfs:comment "Organizations offering job positions"@en .
+
+:HRDocument rdf:type owl:Class ;
+rdfs:label "HR Document"@en ;
+rdfs:comment "Base class for all HR-related documents"@en .
+
+:Job rdf:type owl:Class ;
+rdfs:label "Job"@en ;
+rdfs:comment "Job positions offered by companies"@en .
+
+:JobDescription rdf:type owl:Class ;
+rdfs:subClassOf :HRDocument ;
+rdfs:label "Job Description"@en ;
+rdfs:comment "Documents describing job requirements and details"@en .
+
+:Location rdf:type owl:Class ;
+rdfs:label "Location"@en ;
+rdfs:comment "Geographic locations"@en .
+
+:Person rdf:type owl:Class ;
+rdfs:subClassOf foaf:Person ;
+rdfs:label "Person"@en ;
+rdfs:comment "Job candidates represented as persons"@en .
+
+:Resume rdf:type owl:Class ;
+rdfs:subClassOf :HRDocument ;
+rdfs:label "Resume"@en ;
+rdfs:comment "Candidate resume documents"@en .
+
+:Role rdf:type owl:Class ;
+rdfs:label "Role"@en ;
+rdfs:comment "Professional roles or job functions"@en .
+
+:Skill rdf:type owl:Class ;
+rdfs:label "Skill"@en ;
+rdfs:comment "Professional skills and competencies"@en .
+
+:WorkExperience rdf:type owl:Class ;
+rdfs:label "Work Experience"@en ;
+rdfs:comment "Professional work experience records"@en .
