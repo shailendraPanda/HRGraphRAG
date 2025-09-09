@@ -1,17 +1,54 @@
 # HRGraphRAG
 A Demo Graph RAG pipeline using OnTop VKG , Trino as SQL engine and Postgres as Relation DB.
 
-#compose YAML
-It exposes the following two ports for the browser:
-http://localhost:8082 (opens new window)H2 Web Console
-http://localhost:8080 (opens new window)Ontop SPARQL endpoint
+## compose YAML
+### 🔌 Port & Endpoint Summary – Semantic HR Stack
 
-#Ontology File Sample
+### 🗄️ PostgreSQL
+
+- **Port:** `5432`  
+- **Purpose:** SQL access for relational HR data  
+- **Used by:** Trino connector  
+- **Endpoint:**  
+  `jdbc:postgresql://localhost:5432/hr_db`
+
+---
+
+### 🚀 Trino
+
+- **Port:** `8080`  
+- **Purpose:** Distributed SQL query engine  
+- **Used by:** Ontop (via JDBC), direct SQL clients  
+- **Endpoints:**  
+  - Web UI: `http://localhost:8080`  
+  - JDBC: `jdbc:trino://localhost:8080/postgresql/hr_db`
+
+---
+
+### 🧠 Ontop
+
+- **Port:** `8081`  
+- **Purpose:** SPARQL endpoint over virtual RDF graph  
+- **Used by:** Semantic clients, reasoning engines  
+- **Endpoint:**  
+  `http://localhost:8081/sparql`
+
+---
+
+### 📦 Summary Table
+
+| Service     | Port  | Protocol | Endpoint                            | Purpose                          |
+|-------------|-------|----------|-------------------------------------|----------------------------------|
+| PostgreSQL  | 5432  | JDBC     | `jdbc:postgresql://localhost:5432` | Relational data storage          |
+| Trino       | 8080  | HTTP/JDBC| `http://localhost:8080`            | SQL federation & query engine    |
+| Ontop       | 8081  | HTTP     | `http://localhost:8081/sparql`     | SPARQL over ontology + OBDA      |
+
+## Ontology File Sample
 https://ontop-vkg.org/tutorial/basic/university.ttl
 
 Project has a hr-ontology file
 
-#Markdown to PDF conversion in VS Code
+## Markdown to PDF conversion in VS Code
 - Install Extension
 Open VS Code and install the extension called Markdown PDF by yzane.
 - Open Your Markdown File
@@ -19,6 +56,9 @@ Load your .md resume file in the editor.
 - Export to PDF
 Right-click anywhere in the editor and select Markdown PDF: Export (pdf).
 The PDF will be saved in the same folder as your Markdown file
+
+## Pipeline
+SPARQL Query → Ontop Engine → OBDA Mapping → SQL Query → Trino → PostgreSQL → Result → RDF Triples
 
 
 

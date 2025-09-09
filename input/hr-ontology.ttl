@@ -24,6 +24,17 @@
     rdfs:domain :Resume ;
     rdfs:range foaf:Person .
 
+:phoneNumber rdf:type owl:DatatypeProperty ;
+    rdfs:domain foaf:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "Phone Number"@en .
+
+:location rdf:type owl:DatatypeProperty ;
+    rdfs:domain foaf:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "Location"@en .
+
+
 :hasSkill rdf:type owl:ObjectProperty ;
     rdfs:domain :Resume ;
     rdfs:range :Skill .
@@ -97,6 +108,12 @@
 :roleHeld rdf:type owl:ObjectProperty ;
     rdfs:domain :Experience ;
     rdfs:range :Role .
+    
+:experienceSkill rdf:type owl:ObjectProperty ;
+    rdfs:domain :Experience ;
+    rdfs:range :Skill ;
+    rdfs:label "Skills used in this experience"@en .
+
 
 ### Education Details
 :degree rdf:type owl:DatatypeProperty ;

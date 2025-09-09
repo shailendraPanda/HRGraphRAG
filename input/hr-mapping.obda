@@ -1,0 +1,143 @@
+[PrefixDeclaration]
+:       http://example.org/hr#
+rdf:    http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:   http://www.w3.org/2000/01/rdf-schema#
+xsd:    http://www.w3.org/2001/XMLSchema#
+foaf:   http://xmlns.com/foaf/0.1/
+
+[MappingDeclaration] @collection [
+
+  ### Resume and Candidate
+
+  mappingId    ResumeClass
+  target       :resume/{id} rdf:type :Resume .
+  source       SELECT id FROM resumes
+
+  mappingId    ResumeCandidate
+  target       :resume/{id} :hasCandidate :person/{id} .
+  source       SELECT id FROM resumes
+
+  mappingId    CandidateName
+  target       :person/{id} foaf:name {name}^^xsd:string .
+  source       SELECT id, name FROM resumes
+
+  mappingId    CandidateEmail
+  target       :person/{id} foaf:mbox {email}^^xsd:string .
+  source       SELECT id, email FROM resumes
+
+  mappingId    CandidatePhone
+  target       :person/{id} :phoneNumber {phone}^^xsd:string .
+  source       SELECT id, phone FROM resumes
+
+  mappingId    CandidateLocation
+  target       :person/{id} :location {location}^^xsd:string .
+  source       SELECT id, location FROM resumes
+
+  mappingId    ResumeExpectedSalary
+  target       :resume/{id} :expectedSalary {expected_salary}^^xsd:decimal .
+  source       SELECT id, expected_salary FROM resumes
+
+  mappingId    ResumeRole
+  target       :resume/{id} :hasRole :{role} .
+  source       SELECT id, role FROM resumes
+
+  mappingId    ResumeSkill
+  target       :resume/{id} :hasSkill :skill/{skill} .
+  source       SELECT id, UNNEST(skills) AS skill FROM resumes
+
+  ### Experience per Role
+
+  mappingId    ResumeExperienceLink
+  target       :resume/{resume_id} :hasExperience :exp/{id} .
+  source       SELECT id, resume_id FROM experience
+
+  mappingId    ExperienceClass
+  target       :exp/{id} rdf:type :Experience .
+  source       SELECT id FROM experience
+
+  mappingId    ExperienceRole
+  target       :exp/{id} :roleHeld :{role} .
+  source       SELECT id, role FROM experience
+
+  mappingId    ExperienceCompany
+  target       :exp/{id} :workedAt :company/{company} .
+  source       SELECT id, company FROM experience
+
+  mappingId    ExperienceYears
+  target       :exp/{id} :yearsOfExperience {years}^^xsd:decimal .
+  source       SELECT id, years FROM experience
+
+  mappingId    ExperienceSkill
+  target       :exp/{id} :experienceSkill :skill/{skill} .
+  source       SELECT id, UNNEST(skills) AS skill FROM experience
+
+  ### Job Description
+
+  mappingId    JobClass
+  target       :job/{id} rdf:type :JobDescription .
+  source       SELECT id FROM job_descriptions
+
+  mappingId    JobRole
+  target       :job/{id} :hasRole :{role} .
+  source       SELECT id, role FROM job_descriptions
+
+  mappingId    JobMinSalary
+  target       :job/{id} :minimumSalary {min_salary}^^xsd:decimal .
+  source       SELECT id, min_salary FROM job_descriptions
+
+  mappingId    JobMaxSalary
+  target       :job/{id} :maximumSalary {max_salary}^^xsd:decimal .
+  source       SELECT id, max_salary FROM job_descriptions
+
+  mappingId    JobRequiredSkill
+  target       :job/{id} :requiresSkill :skill/{skill} .
+  source       SELECT id, UNNEST(required_skills) AS skill FROM job_descriptions
+
+  mappingId    JobCompany
+  target       :job/{id} :offeredBy :company/{company_name} .
+  source       SELECT id, company_name FROM job_descriptions
+
+  mappingId    JobRequiredExperience
+  target       :job/{id} :requiresExperience :exp/{id} .
+  source       SELECT id FROM job_descriptions
+
+  mappingId    JobRequiredEducation
+  target       :job/{id} :requiresEducation :edu/{id} .
+  source       SELECT id FROM job_descriptions
+
+  ### Education (Placeholder)
+
+  mappingId    ResumeEducation
+  target       :resume/{resume_id} :hasEducation :edu/{id} .
+  source       SELECT id, resume_id FROM education
+
+  mappingId    EducationDegree
+  target       :edu/{id} :degree {degree}^^xsd:string .
+  source       SELECT id, degree FROM education
+
+  mappingId    EducationInstitution
+  target       :edu/{id} :institution {institution}^^xsd:string .
+  source       SELECT id, institution FROM education
+
+  mappingId    EducationYear
+  target       :edu/{id} :graduationYear {graduation_year}^^xsd:gYear .
+  source       SELECT id, graduation_year FROM education
+
+  ### Certification (Placeholder)
+
+  mappingId    ResumeCertification
+  target       :resume/{resume_id} :hasCertification :cert/{id} .
+  source       SELECT id, resume_id FROM certification
+
+  mappingId    CertificationName
+  target       :cert/{id} :certificationName {name}^^xsd:string .
+  source       SELECT id, name FROM certification
+
+  mappingId    CertificationIssuer
+  target       :cert/{id} :issuedBy :company/{issuer} .
+  source       SELECT id, issuer FROM certification
+
+  mappingId    CertificationYear
+  target       :cert/{id} :issueYear {issue_year}^^xsd:gYear .
+  source       SELECT id, issue_year FROM certification
+]
